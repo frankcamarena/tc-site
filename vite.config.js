@@ -8,5 +8,5 @@ export default defineConfig({
   
   // AÑADE O MODIFICA ESTA LÍNEA
   // La base debe ser el nombre de tu repositorio, rodeado de barras diagonales.
-  base: '/tc-site/', 
+  base: '/', 
 })
