@@ -2,29 +2,32 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Page Not Found - Top Cleaning</title>
-    <base href="/">
+    <title>Not Found</title>
+    <!-- Usa la etiqueta <base> para asegurar que el navegador busque assets desde la raíz -->
+    <base href="/"> 
     <script>
-        // Esta lógica reescribe la URL fallida al formato de hash,
-        // lo que permite que el router de React (BrowserRouter) maneje la ruta.
+        // CRUCIAL: GitHub Pages, al fallar en encontrar /joinTeam, sirve este 404.html.
+        // Este script redirige la solicitud de vuelta a la raíz de la app (/)
+        // y adjunta la ruta deseada como un parámetro de consulta (?p=...)
+        
         var path = window.location.pathname;
-        if (path) {
-            // Asegura que la ruta raíz (/) redirija a la raíz de la app si hay error
-            if (path === '/' || path.match(/\.[a-zA-Z0-9]+$/)) {
-                window.location.replace('/');
-            } else {
-                // Si hay una ruta específica (ej: /joinTeam), la redirige a la raíz
-                // permitiendo que el JavaScript de React cargue y procese la URL.
-                sessionStorage.setItem('redirectPath', path + window.location.search);
-                window.location.replace('/');
-            }
-        } else {
+        var query = window.location.search;
+        
+        // Evita un bucle de redirección en caso de que ya estemos en la raíz o ya tengamos el parámetro de error
+        if (path === '/' || query.includes('error404')) {
+            // Si ya estamos en la raíz o ya intentamos la redirección, no hacemos nada para evitar bucles.
+            // Si el usuario ve un 404 de GitHub, el problema es que el index.html no se cargó correctamente.
+            // Simplemente redirigimos a la raíz.
             window.location.replace('/');
+        } else {
+            // Almacena la ruta deseada, luego redirige al inicio.
+            // React Router en App.jsx debe estar configurado para leer esta ruta.
+            var redirectUrl = '/?p=' + encodeURIComponent(path + query);
+            window.location.replace(redirectUrl);
         }
     </script>
 </head>
 <body>
-    <!-- Fallback si JavaScript está deshabilitado -->
-    <p>Loading application...</p>
+    <p>Redirecting...</p>
 </body>
 </html>
