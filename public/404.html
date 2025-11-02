@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Page Not Found - Top Cleaning</title>
+    <base href="/">
+    <script>
+        // Esta lógica reescribe la URL fallida al formato de hash,
+        // lo que permite que el router de React (BrowserRouter) maneje la ruta.
+        var path = window.location.pathname;
+        if (path) {
+            // Asegura que la ruta raíz (/) redirija a la raíz de la app si hay error
+            if (path === '/' || path.match(/\.[a-zA-Z0-9]+$/)) {
+                window.location.replace('/');
+            } else {
+                // Si hay una ruta específica (ej: /joinTeam), la redirige a la raíz
+                // permitiendo que el JavaScript de React cargue y procese la URL.
+                sessionStorage.setItem('redirectPath', path + window.location.search);
+                window.location.replace('/');
+            }
+        } else {
+            window.location.replace('/');
+        }
+    </script>
+</head>
+<body>
+    <!-- Fallback si JavaScript está deshabilitado -->
+    <p>Loading application...</p>
+</body>
+</html>
