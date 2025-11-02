@@ -2,25 +2,20 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Redireccionando</title>
+    <title>Redirect</title>
+    
+    <!-- El elemento base asegura que todas las rutas sean relativas a la raíz. -->
     <base href="/"> 
+    
+    <!-- Script de redirección simple para forzar la carga de index.html -->
     <script>
-        // CRUCIAL: Este script asegura que la URL limpia (/joinTeam) se convierta
-        // en una URL de Hash (#/joinTeam) para que React Router la procese correctamente.
-        var path = window.location.pathname;
-        var newPath = path.startsWith('/') ? path : '/' + path;
-
-        // Redirige al index.html forzando al navegador a intentar cargar la ruta principal
-        if (newPath !== '/') {
-            // Ejemplo: /joinTeam se convierte en /#/joinTeam
-            window.location.replace('/#' + newPath);
-        } else {
-            // Si ya estamos en la raíz (y hubo un 404), recargamos la raíz.
-            window.location.replace('/');
-        }
+        // Mantiene la ruta limpia (ej: /joinTeam) y la envía al index.html
+        sessionStorage.redirect = location.href;
+        location.replace('/');
     </script>
 </head>
 <body>
-    <p>Redireccionando...</p>
+    <!-- Este contenido casi nunca se ve, ya que el script redirige instantáneamente -->
+    <p>Redirect...</p>
 </body>
 </html>
