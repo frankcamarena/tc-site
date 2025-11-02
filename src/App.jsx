@@ -1,8 +1,8 @@
 // src/App.jsx
 
-import React, { useEffect } from 'react';
-// Importamos useNavigate para la redirección programática
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'; 
+import React from 'react';
+// IMPORTANTE: Usamos HashRouter para máxima compatibilidad con GitHub Pages
+import { HashRouter, Routes, Route } from 'react-router-dom'; 
 
 // Importación de estilos globales
 import './styles/global.css'; 
@@ -14,8 +14,10 @@ import MainContent from './components/MainContent';
 import JoinTeam from './components/JoinTeam';       
 
 
-// Componente que maneja la lógica de redirección, debe estar dentro de BrowserRouter
+// Componente que maneja la lógica de las rutas
 const AppRouter = () => {
+    // Nota: El Header ya no necesita la prop navigateTo. Asumimos que usa <Link to="/...">
+    
     return (
         <div className="App">
             
@@ -51,12 +53,13 @@ const AppRouter = () => {
     );
 }
 
-// Componente principal que envuelve el BrowserRouter
+// Componente principal que envuelve el HashRouter
 function App() {
     return (
-        <BrowserRouter basename="/">
+        // Usar HashRouter garantiza que el enrutamiento funcione sin problemas en GitHub Pages.
+        <HashRouter>
             <AppRouter />
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 

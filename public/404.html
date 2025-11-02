@@ -2,32 +2,25 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Not Found</title>
-    <!-- Usa la etiqueta <base> para asegurar que el navegador busque assets desde la raíz -->
+    <title>Redireccionando</title>
     <base href="/"> 
     <script>
-        // CRUCIAL: GitHub Pages, al fallar en encontrar /joinTeam, sirve este 404.html.
-        // Este script redirige la solicitud de vuelta a la raíz de la app (/)
-        // y adjunta la ruta deseada como un parámetro de consulta (?p=...)
-        
+        // CRUCIAL: Este script asegura que la URL limpia (/joinTeam) se convierta
+        // en una URL de Hash (#/joinTeam) para que React Router la procese correctamente.
         var path = window.location.pathname;
-        var query = window.location.search;
-        
-        // Evita un bucle de redirección en caso de que ya estemos en la raíz o ya tengamos el parámetro de error
-        if (path === '/' || query.includes('error404')) {
-            // Si ya estamos en la raíz o ya intentamos la redirección, no hacemos nada para evitar bucles.
-            // Si el usuario ve un 404 de GitHub, el problema es que el index.html no se cargó correctamente.
-            // Simplemente redirigimos a la raíz.
-            window.location.replace('/');
+        var newPath = path.startsWith('/') ? path : '/' + path;
+
+        // Redirige al index.html forzando al navegador a intentar cargar la ruta principal
+        if (newPath !== '/') {
+            // Ejemplo: /joinTeam se convierte en /#/joinTeam
+            window.location.replace('/#' + newPath);
         } else {
-            // Almacena la ruta deseada, luego redirige al inicio.
-            // React Router en App.jsx debe estar configurado para leer esta ruta.
-            var redirectUrl = '/?p=' + encodeURIComponent(path + query);
-            window.location.replace(redirectUrl);
+            // Si ya estamos en la raíz (y hubo un 404), recargamos la raíz.
+            window.location.replace('/');
         }
     </script>
 </head>
 <body>
-    <p>Redirecting...</p>
+    <p>Redireccionando...</p>
 </body>
 </html>
