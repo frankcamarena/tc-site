@@ -1,8 +1,8 @@
 // src/App.jsx
 
 import React from 'react';
-// IMPORTANTE: Usamos HashRouter para máxima compatibilidad con GitHub Pages
-import { HashRouter, Routes, Route } from 'react-router-dom'; 
+// IMPORTANTE: Cambiamos de nuevo a BrowserRouter para URLs limpias y SEO
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
 
 // Importación de estilos globales
 import './styles/global.css'; 
@@ -16,7 +16,7 @@ import JoinTeam from './components/JoinTeam';
 
 // Componente que maneja la lógica de las rutas
 const AppRouter = () => {
-    // Nota: El Header ya no necesita la prop navigateTo. Asumimos que usa <Link to="/...">
+    // El Header debe usar <Link to="/..."> para la navegación interna
     
     return (
         <div className="App">
@@ -53,13 +53,14 @@ const AppRouter = () => {
     );
 }
 
-// Componente principal que envuelve el HashRouter
+// Componente principal que envuelve el BrowserRouter
 function App() {
     return (
-        // Usar HashRouter garantiza que el enrutamiento funcione sin problemas en GitHub Pages.
-        <HashRouter>
+        // Usamos BrowserRouter para URLs limpias (sin #).
+        // Depende de public/404.html para funcionar en GitHub Pages.
+        <BrowserRouter>
             <AppRouter />
-        </HashRouter>
+        </BrowserRouter>
     );
 }
 
