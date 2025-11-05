@@ -4,18 +4,22 @@
     <meta charset="utf-8">
     <title>Redirect</title>
     
-    <!-- El elemento base asegura que todas las rutas sean relativas a la raíz. -->
+    <!-- El elemento base asegura que todas las rutas sean relativas a la raíz (/). -->
     <base href="/"> 
     
     <!-- Script de redirección simple para forzar la carga de index.html -->
     <script>
-        // Mantiene la ruta limpia (ej: /joinTeam) y la envía al index.html
+        // 1. Guarda la URL original completa (ej: https://top-cleaning.ca/joinTeam) 
+        //    en sessionStorage antes de que la redirección borre la información.
         sessionStorage.redirect = location.href;
+        
+        // 2. Fuerza la navegación a la raíz (/)
+        //    Esto carga tu index.html, donde React (App.jsx) leerá el URL guardado.
         location.replace('/');
     </script>
 </head>
 <body>
     <!-- Este contenido casi nunca se ve, ya que el script redirige instantáneamente -->
-    <p>Redirect...</p>
+    <p>Redirecting to the main site...</p>
 </body>
 </html>
