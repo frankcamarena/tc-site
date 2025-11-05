@@ -1,23 +1,57 @@
 // src/App.jsx
 
-import React from 'react';
-// IMPORTANTE: Cambiamos de nuevo a BrowserRouter para URLs limpias y SEO
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
+import React, { useEffect } from 'react'; 
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'; 
 
 // Importación de estilos globales
 import './styles/global.css'; 
 
-// Importación de componentes de la estructura
+// Importación de componentes de la estructura (ajusta estas rutas si son diferentes)
 import Header from './components/Header';
 import Footer from './components/Footer'; 
-import MainContent from './components/MainContent'; 
-import JoinTeam from './components/JoinTeam';       
+import MainContent from './components/MainContent'; // Componente de la página principal
+import JoinTeam from './components/JoinTeam';       // Componente de la página /joinTeam
 
 
-// Componente que maneja la lógica de las rutas
+// Componente principal que contiene la lógica de enrutamiento
 const AppRouter = () => {
-    // El Header debe usar <Link to="/..."> para la navegación interna
-    
+    const navigate = useNavigate();
+
+    // Lógica para manejar la redirección de GitHub Pages (404.html)
+    // Se ejecuta solo una vez al cargar la aplicación.
+    useEffect(() => {
+        // 1. Revisa si hay una URL guardada por el script 404.html
+        if (sessionStorage.redirect) {
+            
+            let redirectPath = null;
+            const fullUrl = sessionStorage.redirect;
+            
+            // Lógica de parsing robusta con try/catch para manejar URLs sin protocolo
+            // Esto asegura que podemos extraer la ruta correcta, sea https://.../joinTeam
+            // o solo /joinTeam
+            try {
+                // Intenta parsear la URL completa
+                const urlObject = new URL(fullUrl);
+                redirectPath = urlObject.pathname;
+            } catch (e) {
+                // Si falla (porque no tiene http/https), asumimos que ya es la ruta
+                // y limpiamos cualquier posible origen que se haya colado.
+                const pathOnly = fullUrl.replace(/^(http|https):\/\/[^/]+/, '');
+                redirectPath = pathOnly;
+            }
+            
+            // 2. Limpia el sessionStorage inmediatamente para evitar redirecciones en cascada
+            sessionStorage.removeItem('redirect');
+
+            // 3. Forzamos la navegación a la ruta limpia (ej: /joinTeam)
+            // Solo si la ruta no es la raíz.
+            if (redirectPath && redirectPath !== '/') {
+                // console.log(`Redirigiendo a la ruta original: ${redirectPath}`);
+                navigate(redirectPath, { replace: true });
+            }
+        }
+    }, [navigate]);
+
     return (
         <div className="App">
             
@@ -56,9 +90,9 @@ const AppRouter = () => {
 // Componente principal que envuelve el BrowserRouter
 function App() {
     return (
-        // Usamos BrowserRouter para URLs limpias (sin #).
-        // Depende de public/404.html para funcionar en GitHub Pages.
+        // Usamos BrowserRouter para URLs limpias (sin #), esencial para SEO.
         <BrowserRouter>
+            {/* El AppRouter debe estar dentro del BrowserRouter para usar useNavigate */}
             <AppRouter />
         </BrowserRouter>
     );
