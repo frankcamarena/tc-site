@@ -31,7 +31,7 @@ const ApplicationForm = () => {
     e.preventDefault();
     
     // REEMPLAZA ESTO CON TU URL DE N8N (Usa la de TEST primero)
-    const N8N_WEBHOOK_URL = "https://n8n.zenticflow.com/webhook-test/submit-application"; 
+    const N8N_WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL; 
 
     try {
         // Creamos un objeto FormData para poder enviar el archivo
