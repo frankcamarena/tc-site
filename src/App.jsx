@@ -6,12 +6,16 @@ import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 // Importación de estilos globales
 import './styles/global.css'; 
 
-// Importación de componentes de la estructura (ajusta estas rutas si son diferentes)
+// Importación de componentes de la estructura
 import Header from './components/Header';
 import Footer from './components/Footer'; 
 import MainContent from './components/MainContent'; // Componente de la página principal
 import JoinTeam from './components/JoinTeam';       // Componente de la página /joinTeam
+import Dashboard from './components/Dashboard';     // Componente del Dashboard
 
+// --- NUEVOS IMPORTS DE AUTENTICACIÓN ---
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Componente principal que contiene la lógica de enrutamiento
 const AppRouter = () => {
@@ -26,27 +30,20 @@ const AppRouter = () => {
             let redirectPath = null;
             const fullUrl = sessionStorage.redirect;
             
-            // Lógica de parsing robusta con try/catch para manejar URLs sin protocolo
-            // Esto asegura que podemos extraer la ruta correcta, sea https://.../joinTeam
-            // o solo /joinTeam
+            // Lógica de parsing robusta
             try {
-                // Intenta parsear la URL completa
                 const urlObject = new URL(fullUrl);
                 redirectPath = urlObject.pathname;
             } catch (e) {
-                // Si falla (porque no tiene http/https), asumimos que ya es la ruta
-                // y limpiamos cualquier posible origen que se haya colado.
                 const pathOnly = fullUrl.replace(/^(http|https):\/\/[^/]+/, '');
                 redirectPath = pathOnly;
             }
             
-            // 2. Limpia el sessionStorage inmediatamente para evitar redirecciones en cascada
+            // 2. Limpia el sessionStorage
             sessionStorage.removeItem('redirect');
 
-            // 3. Forzamos la navegación a la ruta limpia (ej: /joinTeam)
-            // Solo si la ruta no es la raíz.
+            // 3. Forzamos la navegación a la ruta limpia
             if (redirectPath && redirectPath !== '/') {
-                // console.log(`Redirigiendo a la ruta original: ${redirectPath}`);
                 navigate(redirectPath, { replace: true });
             }
         }
@@ -73,6 +70,23 @@ const AppRouter = () => {
                     element={<JoinTeam />} 
                 />
 
+                {/* --- RUTA DE LOGIN (PÚBLICA) --- */}
+                <Route 
+                    path="/login" 
+                    element={<Login />} 
+                />
+
+                {/* --- RUTA PROTEGIDA (DASHBOARD) --- */}
+                {/* Solo se puede acceder si ProtectedRoute lo permite */}
+                <Route 
+                    path="/dashboard" 
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    } 
+                />
+
                 {/* Ruta de 404/Fallback: Muestra la página principal para cualquier otra ruta */}
                 <Route 
                     path="*" 
@@ -90,9 +104,7 @@ const AppRouter = () => {
 // Componente principal que envuelve el BrowserRouter
 function App() {
     return (
-        // Usamos BrowserRouter para URLs limpias (sin #), esencial para SEO.
         <BrowserRouter>
-            {/* El AppRouter debe estar dentro del BrowserRouter para usar useNavigate */}
             <AppRouter />
         </BrowserRouter>
     );

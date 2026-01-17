@@ -1,9 +1,9 @@
 // src/components/ValueProposition.jsx
 
 import React from 'react';
-import FixedPriceIcon from '../assets/fixid_price.PNG';      // Calculadora
-import EcoFriendlyIcon from '../assets/eco_friendly.PNG';  // Gota con hoja
-import GuaranteeIcon from '../assets/100_guarantee.PNG';    // Escudo con check
+import FixedPriceIcon from '../assets/fixid_price.PNG';      
+import EcoFriendlyIcon from '../assets/eco_friendly.PNG';  
+import GuaranteeIcon from '../assets/100_guarantee.PNG';    
 
 const ValueProposition = () => {
   const values = [
@@ -25,36 +25,46 @@ const ValueProposition = () => {
   ];
 
   return (
-    <section className="value-section">
-      <div className="container">
-        <h2 style={{ textAlign: 'center', marginBottom: '50px', color: 'var(--color-navy)', fontSize: '2.5em' }}>
+    <section className="py-20 bg-white">
+      <div className="container-custom">
+        
+        {/* Título de la Sección */}
+        <h2 className="text-3xl md:text-4xl font-bold text-navy text-center mb-16">
           Why Choose Top Cleaning?
         </h2>
         
-        <div className="value-grid">
+        {/* Grid de Valores (1 columna en móvil, 3 en desktop) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {values.map((value, index) => (
-            <div key={index} className="value-card">
-              <div className="value-icon">
-                {/* Usamos la imagen importada.
-                  El estilo height: '80px' es un ejemplo. Ajusta el tamaño de la imagen 
-                  para que se vea bien en el contenedor.
-                */}
+            <div 
+                key={index} 
+                className="flex flex-col items-center text-center p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white border border-gray-50"
+            >
+              <div className="mb-6 h-24 flex items-center justify-center">
+                {/* Imagen del Icono */}
                 <img 
                   src={value.icon} 
                   alt={value.title} 
-                  style={{ height: '80px', width: 'auto', marginBottom: '15px' }} 
+                  className="h-20 w-auto object-contain drop-shadow-sm" 
                 /> 
               </div>
-              <h3>{value.title}</h3>
-              <p>{value.description}</p>
+              
+              <h3 className="text-xl font-bold text-navy mb-3">
+                {value.title}
+              </h3>
+              
+              <p className="text-gray-600 leading-relaxed">
+                {value.description}
+              </p>
             </div>
           ))}
         </div>
         
-        {/* Recomendación de UX: Añadir un eslogan debajo para reforzar la confianza */}
-        <p style={{ textAlign: 'center', marginTop: '60px', fontSize: '1.5em', fontWeight: '500', color: 'var(--color-navy)' }}>
-          The Cleaning that Fits Your Life, Guaranteed.
+        {/* Eslogan de Cierre */}
+        <p className="text-center mt-16 text-xl md:text-2xl font-medium text-navy italic border-t border-gray-100 pt-8 w-full max-w-2xl mx-auto">
+          "The Cleaning that Fits Your Life, Guaranteed."
         </p>
+
       </div>
     </section>
   );

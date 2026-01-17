@@ -1,6 +1,8 @@
 // src/components/MainContent.jsx
 
 import React from 'react';
+
+// Importación de componentes hijos (Ya migrados a Tailwind)
 import Hero from './Hero'; 
 import ValueProposition from './ValueProposition'; 
 import ServiceChecklist from './ServiceChecklist'; 
@@ -8,18 +10,29 @@ import ScrollingTestimonials from './ScrollingTestimonials';
 
 const MainContent = () => {
     return (
-        <main>
-            {/* 2. Sección Principal / Cotizador */}
+        // El tag <main> encapsula el contenido principal de la página.
+        // 'flex-grow' es útil si usas Flexbox en App.jsx para empujar el footer hacia abajo.
+        // 'w-full' asegura que ocupe todo el ancho.
+        <main className="flex-grow w-full bg-transparent">
+            
+            {/* 1. SECCIÓN HERO (Cotizador y Primera Impresión) */}
+            {/* Esta sección ya tiene su propio padding y background, no necesita wrapper extra */}
             <Hero /> 
             
-            {/* 3. Propuesta de Valor (3 Beneficios Clave) */}
-            <ValueProposition /> 
+            {/* 2. PROPUESTA DE VALOR (Beneficios Clave) */}
+            {/* Agregamos un contenedor opcional si quisieras un fondo específico aquí */}
+            <div className="relative">
+                <ValueProposition /> 
+            </div>
             
-            {/* 4. Lista de Servicios con Pestañas (Service Checklist) */}
-            <ServiceChecklist />
+            {/* 3. CHECKLIST DE SERVICIOS (Tabs interactivos) */}
+            <div className="relative">
+                <ServiceChecklist />
+            </div>
             
-            {/* 5. Testimonios con Scrolling */}
+            {/* 4. PRUEBA SOCIAL (Testimonios en Scroll) */}
             <ScrollingTestimonials /> 
+            
         </main>
     );
 };

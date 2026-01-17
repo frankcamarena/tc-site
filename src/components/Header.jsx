@@ -1,63 +1,96 @@
 // src/components/Header.jsx
 
-import React from 'react';
-// IMPORTANTE: Importamos 'Link' para la navegación interna
-import { Link } from 'react-router-dom';
-// Asegúrate de que la ruta de importación sea correcta
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient'; // Importamos Supabase para verificar sesión
 import Logo from '../assets/Logo_TopCleaning.png'; 
 
-// El componente ahora NO acepta la prop 'navigateTo'
 const Header = () => {
-    // Estilos inline para el ejemplo, pero se recomienda usar clases CSS
-    const headerStyle = {
-        backgroundColor: 'var(--color-navy)',
-        padding: '15px 0',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    };
+    const navigate = useNavigate();
+    const [session, setSession] = useState(null);
 
-    // Estilos para el botón CTA
-    const ctaStyle = {
-        backgroundColor: 'var(--color-yellow-accent)', 
-        color: 'var(--color-navy)',
-        fontWeight: 'bold'
+    // --- LÓGICA DE SESIÓN (EL CEREBRO DEL HEADER) ---
+    useEffect(() => {
+        // 1. Verificar si hay alguien logueado al cargar
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+        });
+
+        // 2. Escuchar cambios en tiempo real (Login o Logout)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    // --- FUNCIÓN DE LOGOUT ---
+    const handleLogout = async () => {
+        await supabase.auth.signOut(); // Cierra sesión en Supabase
+        navigate('/'); // Te manda al home
     };
 
     return (
-        <header className="header" style={headerStyle}>
-            <div className="container header-content">
-            
-                {/* LOGO - Usa <Link to="/"> para ir a la página principal */}
+        <header className="bg-navy py-4 shadow-md w-full sticky top-0 z-50">
+            <div className="container-custom flex justify-between items-center">
+                
+                {/* LOGO - Link a home */}
                 <Link 
                     to="/" 
-                    className="logo"
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                    className="flex items-center cursor-pointer hover:opacity-90 transition-opacity"
                 >
-                    <img src={Logo} alt="Top Cleaning Logo" style={{ height: '55px' }} />
+                    <img 
+                        src={Logo} 
+                        alt="Top Cleaning Logo" 
+                        className="h-[55px] w-auto" 
+                    />
                 </Link>
 
-                {/* Navegación - Añadimos el enlace "Join Team" */}
-                <nav className="nav" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                {/* Navegación */}
+                <nav className="flex items-center gap-5">
                     
-                    {/* Enlace "Join Team" - Usa <Link to="/joinTeam"> */}
+                    {/* Enlace "Join Team" (Siempre visible) */}
                     <Link 
                         to="/joinTeam"
-                        className="header-link"
-                        style={{ 
-                            color: 'var(--color-white)', 
-                            textDecoration: 'none', 
-                            fontWeight: '600'
-                        }}
+                        className="text-white font-semibold no-underline hover:text-yellow-accent transition-colors duration-200"
                     >
                         Join Team
                     </Link>
+
+                    {/* --- LÓGICA CONDICIONAL: ¿ESTÁ LOGUEADO? --- */}
+                    {session ? (
+                        // OPCIÓN A: ADMIN LOGUEADO (Dashboard + Logout)
+                        <div className="flex items-center gap-5">
+                            <Link 
+                                to="/dashboard" 
+                                className="text-white font-bold hover:text-white transition-colors"
+                            >
+                                Dashboard
+                            </Link>
+                            
+                            <button 
+                                onClick={handleLogout}
+                                className="text-white font-semibold no-underline hover:text-red-400 font-medium transition-colors"
+                            >
+                                Log Out
+                            </button>
+                        </div>
+                    ) : (
+                        // OPCIÓN B: VISITANTE (Link discreto de Login)
+                        <Link 
+                            to="/login" 
+                            className="text-white font-semibold no-underline hover:text-gray-300 transition-colors"
+                        >
+                            Staff Login
+                        </Link>
+                    )}
                     
-                    {/* CTA Rápido (Este sigue siendo un enlace externo normal) */}
+                    {/* CTA Rápido (WhatsApp) - Siempre visible */}
                     <a
                         href="https://wa.me/6476063974"
-                        className="cta-button header-cta primary-cta"
+                        className="btn-cta bg-yellow-accent text-navy text-sm px-5 py-2.5 shadow-sm hover:shadow-md hover:bg-yellow-400 font-bold rounded"
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={ctaStyle}
                     >
                         Contact Us
                     </a>

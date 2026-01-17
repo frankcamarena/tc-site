@@ -27,16 +27,24 @@ const TESTIMONIALS_DATA = [
 // Componente para una tarjeta de testimonio
 const TestimonialCard = ({ quote, name, source, rating }) => {
   return (
-    <div className="testimonial-card">
-      <div className="rating" style={{ color: 'var(--color-yellow-accent)', fontSize: '1.4em', marginBottom: '10px' }}>
+    <div className="bg-white p-8 rounded-xl shadow-md border-t-4 border-yellow-accent transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl flex flex-col justify-between">
+      
+      {/* Estrellas */}
+      <div className="text-yellow-accent text-2xl mb-4 tracking-widest">
         {rating}
       </div>
-      <p className="quote-text" style={{ fontStyle: 'italic', fontSize: '1.1em', marginBottom: '15px', color: 'var(--color-text-dark)' }}>
+      
+      {/* Cita */}
+      <p className="text-lg italic text-gray-600 mb-6 leading-relaxed">
         "{quote}"
       </p>
-      <div className="client-info">
-        <strong style={{ color: 'var(--color-navy)' }}>{name}</strong> 
-        <span style={{ display: 'block', fontSize: '0.85em', color: '#666' }}>— {source}</span>
+      
+      {/* Info Cliente */}
+      <div className="border-t border-gray-100 pt-4 mt-auto">
+        <strong className="text-navy text-lg block">{name}</strong> 
+        <span className="text-xs text-gray-400 font-semibold uppercase tracking-wide">
+             — {source}
+        </span>
       </div>
     </div>
   );
@@ -44,13 +52,16 @@ const TestimonialCard = ({ quote, name, source, rating }) => {
 
 const Testimonials = () => {
   return (
-    <section className="testimonials-section" style={{ padding: '80px 0', backgroundColor: '#F9F9F9' }}>
-      <div className="container" style={{ textAlign: 'center' }}>
-        <h2 style={{ color: 'var(--color-navy)', fontSize: '2.5em', marginBottom: '50px' }}>
+    <section className="py-20 bg-gray-50">
+      <div className="container-custom text-center">
+        
+        {/* Título de Sección */}
+        <h2 className="text-3xl md:text-4xl font-bold text-navy mb-12">
           What Our Clients Say
         </h2>
         
-        <div className="testimonials-grid">
+        {/* Grid de Testimonios (1 col móvil, 3 cols desktop) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {TESTIMONIALS_DATA.map((testimonial, index) => (
             <TestimonialCard 
               key={index} 
@@ -65,13 +76,7 @@ const Testimonials = () => {
         {/* CTA sutil al final de la sección */}
         <a 
             href="#quote-section" 
-            className="cta-button"
-            style={{ 
-                marginTop: '40px',
-                display: 'inline-block', 
-                backgroundColor: 'var(--color-yellow-accent)', 
-                color: 'var(--color-navy)'
-            }}
+            className="btn-cta bg-yellow-accent text-navy text-lg font-bold py-3 px-8 rounded shadow-md hover:shadow-lg inline-block transition-transform hover:-translate-y-0.5"
         >
             Get Your Instant Quote Now
         </a>

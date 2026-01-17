@@ -1,83 +1,90 @@
 // src/components/ServiceChecklist.jsx
 
 import React, { useState } from 'react';
-import { CHECKLIST_DATA } from '../data/ChecklistData'; // Asegúrate de crear este archivo
+import { CHECKLIST_DATA } from '../data/ChecklistData'; 
 
 const ServiceChecklist = () => {
-  // Estado para la pestaña activa
-  const [activeTab, setActiveTab] = useState('standard'); 
-  
-  // Obtenemos los datos de la pestaña activa
-  const currentChecklist = CHECKLIST_DATA[activeTab];
+    // Estado para la pestaña activa
+    const [activeTab, setActiveTab] = useState('standard');
+    
+    // Obtenemos los datos de la pestaña activa
+    const currentChecklist = CHECKLIST_DATA[activeTab];
 
-  const tabKeys = Object.keys(CHECKLIST_DATA);
-  const tabNames = {
-    standard: 'Standard Clean',
-    deep: 'Deep Clean',
-    moveInOut: 'Move In/Out Clean'
-  };
+    const tabKeys = Object.keys(CHECKLIST_DATA);
+    const tabNames = {
+        standard: 'Standard Clean',
+        deep: 'Deep Clean',
+        moveInOut: 'Move In/Out Clean'
+    };
 
-  // Ícono de checkmark simple
-  const CheckIcon = () => (
-    <span style={{ color: 'var(--color-navy)', marginRight: '10px', fontWeight: 'bold' }}>✓</span>
-  );
+    // Ícono de checkmark con Tailwind
+    const CheckIcon = () => (
+        <span className="text-navy font-bold mr-2">✓</span>
+    );
 
-  return (
-    <section className="checklist-section" style={{ padding: '80px 0'}}>
-      <div className="container">
-        
-        <h2 style={{ color: 'var(--color-navy)', fontSize: '2.5em', textAlign: 'center', marginBottom: '40px' }}>
-          What's Included in Your Clean?
-        </h2>
+    return (
+        <section className="py-20 bg-transparent">
+            <div className="container-custom">
+                
+                <h2 className="text-3xl md:text-4xl font-bold text-navy text-center mb-10">
+                    What's Included in Your Clean?
+                </h2>
 
-        {/* CONTENEDOR DE PESTAÑAS (TABS) */}
-        <div className="tabs-container">
-          <div className="tab-buttons-group">
-            {tabKeys.map(key => (
-              <button
-                key={key}
-                className={`tab-button ${activeTab === key ? 'active' : ''}`}
-                onClick={() => setActiveTab(key)}
-              >
-                {tabNames[key]}
-              </button>
-            ))}
-          </div>
+                {/* CONTENEDOR DE PESTAÑAS (TABS) */}
+                <div className="flex flex-col gap-8">
+                    
+                    {/* Botones de Pestañas */}
+                    <div className="flex flex-col sm:flex-row justify-center gap-4 bg-gray-100 p-2 rounded-lg max-w-3xl mx-auto w-full">
+                        {tabKeys.map(key => (
+                            <button
+                                key={key}
+                                className={`flex-1 py-3 px-6 rounded font-bold text-lg transition-all duration-300 ${
+                                    activeTab === key 
+                                    ? 'bg-navy text-white shadow-md' 
+                                    : 'text-navy hover:bg-lavender bg-transparent'
+                                }`}
+                                onClick={() => setActiveTab(key)}
+                            >
+                                {tabNames[key]}
+                            </button>
+                        ))}
+                    </div>
 
-          {/* CONTENIDO DEL CHECKLIST */}
-          <div className="checklist-content-box">
-            <h3 style={{ color: 'var(--color-navy)', marginBottom: '20px' }}>
-              {currentChecklist.title}
-            </h3>
-            
-            <div className="checklist-grid">
-              {currentChecklist.list.map((category, catIndex) => (
-                <div key={catIndex} className="checklist-category-card">
-                  <h4 style={{ color: 'var(--color-navy)', borderBottom: '2px solid var(--color-yellow-accent)', paddingBottom: '5px', marginBottom: '10px' }}>
-                    {category.category}
-                  </h4>
-                  <ul className="checklist-list">
-                    {category.items.map((item, itemIndex) => (
-                      <li key={itemIndex} className="checklist-item">
-                        <CheckIcon />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                    {/* CONTENIDO DEL CHECKLIST */}
+                    <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                        <h3 className="text-2xl font-bold text-navy mb-6 border-l-4 border-yellow-accent pl-4">
+                            {currentChecklist.title}
+                        </h3>
+                        
+                        {/* Grid de Categorías */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {currentChecklist.list.map((category, catIndex) => (
+                                <div key={catIndex} className="bg-gray-50 p-6 rounded-lg">
+                                    <h4 className="text-lg font-bold text-navy border-b-2 border-yellow-accent pb-2 mb-4">
+                                        {category.category}
+                                    </h4>
+                                    <ul className="space-y-3">
+                                        {category.items.map((item, itemIndex) => (
+                                            <li key={itemIndex} className="flex items-start text-sm text-gray-700">
+                                                <CheckIcon />
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        {/* Nota del servicio */}
+                        <div className="mt-8 p-4 bg-lavender/40 rounded-r-lg border-l-4 border-navy text-navy text-sm md:text-base">
+                            <span className="font-bold">Note:</span> {currentChecklist.note}
+                        </div>
+
+                    </div>
                 </div>
-              ))}
             </div>
-            
-            {/* Nota del servicio */}
-            <p className="checklist-note" style={{ marginTop: '30px', padding: '15px', backgroundColor: 'var(--color-lavender)', borderRadius: '5px', borderLeft: '5px solid var(--color-navy)' }}>
-              **Note:** {currentChecklist.note}
-            </p>
-
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+        </section>
+    );
 };
 
 export default ServiceChecklist;
