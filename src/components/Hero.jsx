@@ -56,15 +56,20 @@ const Hero = () => {
 
     // --- NUEVA LÓGICA DE ENVÍO (Smart SMS) ---
     const handleBookNow = () => {
-        // 1. Preparamos el mensaje con TODOS los datos para que la AI tenga contexto
+        // 1. Preparamos el mensaje con formato vertical limpio
         const formattedSqft = squareFeet.replace('-', ' to ');
         const formattedType = cleaningType === 'deep' ? 'Deep Clean' : 'Standard Clean';
         const formattedFreq = frequency.charAt(0).toUpperCase() + frequency.slice(1).replace('-', ' ');
         
-        const message = `Hello! I'm interested in a cleaning service quote:
+        // Usamos \n para saltos de línea explícitos
+        const message = `Hello, I'm interested in a cleaning:
+
 Price: $${rawCalculatedPrice.toFixed(2)}
 Service: ${formattedType}
-Home: ${formattedSqft} sq ft, ${bedrooms} Bed, ${bathrooms} Bath
+Home: ${formattedSqft}
+Bedrooms: ${bedrooms}
+Bathrooms: ${bathrooms}
+Half Baths: ${halfBaths}
 Frequency: ${formattedFreq}
 
 I would like to check availability.`;
