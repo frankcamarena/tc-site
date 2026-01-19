@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import heroImage from '../assets/hero_image.png';
 
 const Hero = () => {
-    // --- ESTADO Y LÓGICA (Sin cambios) ---
+    // --- ESTADO Y LÓGICA (Precios) ---
     const [cleaningType, setCleaningType] = useState('deep');
     const [frequency, setFrequency] = useState('bi-weekly');
     const [bedrooms, setBedrooms] = useState(1);
@@ -13,10 +13,14 @@ const Hero = () => {
     const [squareFeet, setSquareFeet] = useState('1000-1500');
     const [currentPrice, setCurrentPrice] = useState('150.00');
 
+    // TU NÚMERO TWILIO (Para recibir los SMS)
+    const TWILIO_NUMBER = "12494683100"; 
+
     const updateCount = (state, setState, delta, min = 0) => {
         setState(Math.max(min, state + delta));
     };
 
+    // --- LÓGICA DE CÁLCULO (Se mantiene igual por ahora) ---
     const calculateRawPrice = useCallback(() => {
         const BASE_PRICE = 50;
         const DEEP_CLEAN_SURCHARGE = 50;
@@ -50,28 +54,50 @@ const Hero = () => {
         setCurrentPrice(rawCalculatedPrice.toFixed(2));
     }, [rawCalculatedPrice]);
 
+    // --- NUEVA LÓGICA DE ENVÍO (Smart SMS) ---
     const handleBookNow = () => {
+        // 1. Preparamos el mensaje con TODOS los datos para que la AI tenga contexto
         const formattedSqft = squareFeet.replace('-', ' to ');
         const formattedType = cleaningType === 'deep' ? 'Deep Clean' : 'Standard Clean';
         const formattedFreq = frequency.charAt(0).toUpperCase() + frequency.slice(1).replace('-', ' ');
-        const message = `Hello, I have this quote of $${rawCalculatedPrice.toFixed(2)} for a ${formattedType} service at my ${formattedSqft} sq ft home, which has ${bedrooms} bedrooms, ${bathrooms} bathrooms, and ${halfBaths} half baths, with a ${formattedFreq} frequency. I would like to coordinate and schedule our cleaning service.`;
+        
+        const message = `Hello! I'm interested in a cleaning service quote:
+Price: $${rawCalculatedPrice.toFixed(2)}
+Service: ${formattedType}
+Home: ${formattedSqft} sq ft, ${bedrooms} Bed, ${bathrooms} Bath
+Frequency: ${formattedFreq}
+
+I would like to check availability.`;
+
         const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/6476063974?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
+        
+        // 2. Detectar si es Móvil o PC
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile) {
+            // MÓVIL: Abrir App de Mensajes (SMS)
+            // iOS usa '&' para separar body, Android a veces prefiere '?'
+            const separator = navigator.userAgent.match(/iPhone|iPad/i) ? '&' : '?';
+            window.location.href = `sms:+${TWILIO_NUMBER}${separator}body=${encodedMessage}`;
+        } else {
+            // DESKTOP: Abrir WhatsApp Web (Más amigable en PC)
+            const whatsappUrl = `https://wa.me/${TWILIO_NUMBER}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
     };
 
-    // --- RENDERIZADO CON TAILWIND ---
+    // --- RENDERIZADO ---
     return (
         <section 
             id="quote-section" 
             className="relative min-h-[80vh] flex items-center justify-center text-center bg-cover bg-center text-white"
-            style={{ backgroundImage: `url(${heroImage})` }} // El bg-image inline es aceptable si es dinámico o una imagen importada
+            style={{ backgroundImage: `url(${heroImage})` }} 
         >
             {/* Overlay */}
             <div className="absolute inset-0 bg-navy/65 z-10"></div>
 
             {/* Contenido */}
-            <div className="container-custom relative z-20 px-4">
+            <div className="container-custom relative z-20 px-4 py-12">
                 <h1 className="text-3xl md:text-5xl font-bold mb-8 drop-shadow-md">
                     Quote & Book Your Clean Instantly.
                 </h1>
@@ -79,12 +105,10 @@ const Hero = () => {
                 {/* COTIZADOR */}
                 <div className="bg-lavender p-6 md:p-8 rounded-xl max-w-3xl mx-auto shadow-xl text-text-dark">
                     
-                    {/* Grid de 2 Columnas (1 en móvil, 2 en desktop) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
                         
                         {/* COLUMNA IZQUIERDA */}
                         <div className="flex flex-col gap-5">
-                            
                             {/* 1. Service Type */}
                             <div className="flex flex-col items-start gap-2">
                                 <label className="font-bold text-navy text-sm">Service Type:</label>
@@ -144,12 +168,14 @@ const Hero = () => {
 
                         {/* COLUMNA DERECHA */}
                         <div className="flex flex-col gap-5 justify-center">
-                            
-                            {/* Helper component para los inputs de número */}
                             <NumberInput label="Bedrooms:" value={bedrooms} onChange={setBedrooms} />
                             <NumberInput label="Bathrooms:" value={bathrooms} onChange={setBathrooms} />
                             <NumberInput label="Half Baths:" value={halfBaths} onChange={setHalfBaths} min={0} />
-
+                            
+                            {/* TEXTO DE REFUERZO VISUAL */}
+                            <p className="text-xs text-black-500 mt-2 italic">
+                                Click Book Now to verify availability.
+                            </p>
                         </div>
                     </div>
 
@@ -159,7 +185,7 @@ const Hero = () => {
                             Price: <span className="text-navy">${currentPrice}</span>
                         </span>
                         <button
-                            className="btn-cta bg-yellow-accent text-navy text-lg px-8 py-3 w-full md:w-auto shadow-md hover:shadow-lg"
+                            className="btn-cta bg-yellow-accent text-navy text-lg px-8 py-3 w-full md:w-auto shadow-md hover:shadow-lg transition-transform transform active:scale-95"
                             onClick={handleBookNow}
                         >
                             Book Now

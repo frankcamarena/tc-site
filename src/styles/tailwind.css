@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-text-dark leading-relaxed min-h-screen m-0 p-0 box-border;
+    
+    /* El gradiente es complejo, es mejor dejarlo como CSS estándar dentro de la capa base */
+    background: linear-gradient(
+        135deg, 
+        rgba(230, 230, 250, 0.7), 
+        rgba(255, 255, 255, 0.8), 
+        rgba(240, 248, 255, 0.7), 
+        rgba(230, 230, 250, 0.7)  
+    );
+    background-size: cover;
+    background-attachment: fixed;
+  }
+}
+
+/* @layer components permite crear clases reusables como tu .cta-button */
+@layer components {
+  .container-custom {
+    @apply w-[90%] max-w-[1200px] mx-auto;
+  }
+
+  .btn-cta {
+    @apply py-3 px-6 border-none rounded font-bold cursor-pointer transition-colors duration-300 no-underline;
+  }
+  .btn-cta:hover {
+    filter: brightness(1.1);
+  }
+  
+  /* Reemplazo para tus inputs number */
+  .number-input-btn {
+    @apply bg-navy text-white border-none py-2 px-3 cursor-pointer text-lg transition-colors duration-200 hover:bg-[#0d213a];
+  }
+}

@@ -8,6 +8,9 @@ import Logo from '../assets/Logo_TopCleaning.png';
 const Header = () => {
     const navigate = useNavigate();
     const [session, setSession] = useState(null);
+    
+    // TU NÚMERO DE TWILIO (Formato internacional sin el +)
+    const TWILIO_NUMBER = "12494683100"; 
 
     // --- LÓGICA DE SESIÓN (EL CEREBRO DEL HEADER) ---
     useEffect(() => {
@@ -28,6 +31,28 @@ const Header = () => {
     const handleLogout = async () => {
         await supabase.auth.signOut(); // Cierra sesión en Supabase
         navigate('/'); // Te manda al home
+    };
+
+    // --- LÓGICA SMART CONTACT (SMS en Móvil / WhatsApp en PC) ---
+    const handleContactClick = (e) => {
+        e.preventDefault();
+        
+        // Mensaje inicial para romper el hielo
+        const message = "Welcome to Top Cleaning. How can we help you?";
+        const encodedMessage = encodeURIComponent(message);
+        
+        // Detectar si es dispositivo móvil
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile) {
+            // En celular: Abre la app de SMS
+            // iOS usa '&' para el cuerpo, Android suele usar '?'
+            const separator = navigator.userAgent.match(/iPhone|iPad/i) ? '&' : '?';
+            window.location.href = `sms:+${TWILIO_NUMBER}${separator}body=${encodedMessage}`;
+        } else {
+            // En computadora: Abre WhatsApp Web (es más cómodo para desktop)
+            window.open(`https://wa.me/${TWILIO_NUMBER}?text=${encodedMessage}`, '_blank');
+        }
     };
 
     return (
@@ -85,15 +110,13 @@ const Header = () => {
                         </Link>
                     )}
                     
-                    {/* CTA Rápido (WhatsApp) - Siempre visible */}
-                    <a
-                        href="https://wa.me/6476063974"
-                        className="btn-cta bg-yellow-accent text-navy text-sm px-5 py-2.5 shadow-sm hover:shadow-md hover:bg-yellow-400 font-bold rounded"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    {/* CTA Rápido (Smart SMS Button) - Siempre visible */}
+                    <button
+                        onClick={handleContactClick}
+                        className="btn-cta bg-yellow-accent text-navy text-sm px-5 py-2.5 shadow-sm hover:shadow-md hover:bg-yellow-400 font-bold rounded cursor-pointer"
                     >
                         Contact Us
-                    </a>
+                    </button>
                 </nav>
             </div>
         </header>
